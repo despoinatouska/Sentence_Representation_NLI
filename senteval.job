@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+#SBATCH --job-name=senteval
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=02:00:00
+#SBTACH --mem=32000M
+#SBATCH --output=5SENTEVAL-%A.out
+#SBATCH --error=5SENTEVAL-%A.err
+
+module purge
+module load 2022
+module load Anaconda3/2022.05
+
+
+Activate your environment
+source activate ATCS_GPU
+
+python senteval2.py --model AWESentenceEncoder
+python senteval2.py --model BLSTMEncoder_max
+python senteval2.py --model BLSTMEncoder_last
+python senteval2.py --model LSTMEncoder

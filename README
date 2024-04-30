@@ -1,0 +1,116 @@
+# Sentence Representations through Natural Language Inference
+The objective of this project is to learn general-purpose sentence representations through a Natural Language Inference task. For this scope, there were implemented four different neural models for sentence classification:
+
+- Average Word Embeddings (baseline)
+- Unidirectional Long Short-Term Memory (LSTM) networks
+- Bidirectional LSTMs 
+- Bidirectional LSTMs with Max Pooling (a variant to capture the most important information)
+
+The models were trained on a large dataset called Stanford Natural Language Inference (SNLI). For evaluation, Facebook's SentEval framework was used. This framework tests our models on entirely new tasks they haven't seen before. Our goal is to confirm the results of a previous study, "Supervised Learning of Universal Sentence Representations from Natural Language Inference Data" by Conneau et al. (2017).
+
+## Code Structure
+The weights and logs can be found in this [folder](https://drive.google.com/drive/folders/1_6RRptXSGePBRr4J9xTjmnm_seuriP1X?usp=sharing))
+
+savedir/: This folder is where we will save the checkpoint files during training  
+
+results/: Directory containing the saved results from SentEval      
+
+analysis.ipynb: Notebook containing the results and visualizations 
+
+new_dataset.py: Contains definition of dataset and vocabulary
+
+environment_CPU.yml: Environment CPU
+
+environment_ATCS_GPU.yml: Environment for CUDA GPU  
+
+evaluation.py: Contains evaluation functions for SNLI and model inference functions.  
+
+new_models.py: Contains the code for all the models that were used  
+
+senteval2.py: The file used for model SentEval evaluation 
+
+new_train.py: This file contains the train and validation function
+
+new_main.py: This file contains the main function to where training can start
+
+download_data.bash: Download data for downstream tasks
+
+*.job files where used for experiments in the snellius
+
+
+## Installation
+1. No need to download the dataset or the embeddings as they are automatically downloaded from the code
+2. Install Environment
+* For CPU Only:
+```
+        conda env create -f environment.yml
+        conda activate ATCS
+```
+* For GPU:
+```
+        conda env create -f environment_gpu.yml
+        conda activate ATCS_GPU
+```
+3. Download Pretrained models, Logs and Results files from [Google Drive](https://drive.google.com/drive/folders/1_6RRptXSGePBRr4J9xTjmnm_seuriP1X?usp=sharing)
+    * Put all the models checkpoints from the savedir.rar in the "savedir" folder
+    * Put all the logs from the logs.rar in a "logdir" folder
+    * Pul all the results from the results.rar in the "results" folder
+
+3. Clone SentEval repo into folder at same level as repositorie's
+```
+        git clone https://github.com/facebookresearch/SentEval.git
+        cd SentEval/
+```
+4. Install SentEval inside the conda environment
+```
+        pip install git+https://github.com/facebookresearch/SentEval.git
+```
+5. Download datasets for downstream tasks
+```
+        ./download_data.bash
+```
+6. Modify SentEval/senteval/utils.py file for Python versions >= 3.10
+    In the function: 
+```
+        def get_optimizer(s):
+                ....
+                expected_args = inspect.getargspec(optim_fn.__init__)[0]
+```
+Change it to this:
+```
+        import sys
+        if sys.version_info < (3, 10):
+            expected_args = inspect.getargspec(optim_fn.__init__)[0]
+        else:
+            expected_args = list(inspect.signature(optim_fn.__init__).parameters.keys())
+```
+
+## Training
+Below are examples of how to train every model
+The scrpit used for training is the train_nli.py script. It can be run with the following arguments: 
+```bash
+python new_main.py --encoder_type AWESentenceEncoder
+python new_main.py --encoder_type BLSTMEncoder --pool_type max
+python new_main.py --encoder_type BLSTMEncoder --pool_type last 
+python new_main.py --encoder_type LSTMEncoder 
+
+```
+
+
+## SentEval Evaluation
+Below are examples of how to evaluate every model
+```bash
+python senteval2.py --model AWESentenceEncoder
+python senteval2.py --model BLSTMEncoder_max
+python senteval2.py --model BLSTMEncoder_last
+python senteval2.py --model LSTMEncoder
+```
+
+## Author
+Despoina Touska, despoina.touska@student.uva.nl
+
+
+
+
+
+

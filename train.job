@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+#SBATCH --job-name=train_sparse_encoder
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=04:00:00
+#SBTACH --mem=32000M
+#SBATCH --output=train-%A.out
+#SBATCH --error=train-%A.err
+
+module purge
+module load 2022
+module load Anaconda3/2022.05
+
+
+Activate your environment
+source activate ATCS_GPU
+
+python new_main.py --encoder_type AWESentenceEncoder
+python new_main.py --encoder_type BLSTMEncoder --pool_type max 
+python new_main.py --encoder_type BLSTMEncoder --pool_type last 
+python new_main.py --encoder_type LSTMEncoder 
